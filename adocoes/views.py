@@ -70,6 +70,21 @@ class SolicitacaoAdocaoViewSet(viewsets.ModelViewSet):
         solicitacao.save(update_fields=['status', 'atualizado_em'])
         serializer = self.get_serializer(solicitacao)
         return Response(serializer.data)
+    
+    @extend_schema(tags=['Favoritos'])
+    class FavoritoViewSet(viewsets.ModelViewSet):
+        serializer_class = FavoritoSerializer
+        permission_classes = [IsAuthenticated, PodeAcessarFavorito]
+        http_method_names = ['get', 'post', 'delete', 'head', 'options']
+
+        def get_queryset(self):
+            if getattr(self, 'swagger_fake_view', False):
+                return Favorito.objects.none()
+
+            return Favorito.objects.select_related('usuario', 'pet').filter(usuario=self.request.user)
+
+        def perform_create(self, serializer):
+            serializer.save(usuario=self.request.user)
 
     @action(detail=True, methods=['post'])
     def recusar(self, request, pk=None):

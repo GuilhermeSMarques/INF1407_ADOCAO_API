@@ -43,3 +43,22 @@ class SolicitacaoAdocaoSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('Já existe uma solicitação pendente para este pet.')
 
         return attrs
+    
+class FavoritoSerializer(serializers.ModelSerializer):
+    pet_nome = serializers.CharField(source='pet.nome', read_only=True)
+
+    class Meta:
+        model = Favorito
+        fields = ['id', 'usuario', 'pet', 'pet_nome', 'criado_em']
+        read_only_fields = ['id', 'usuario', 'pet_nome', 'criado_em']
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        pet = attrs.get('pet')
+
+        if request and pet:
+            favorito_existe = Favorito.objects.filter(usuario=request.user, pet=pet).exists()
+            if favorito_existe:
+                raise serializers.ValidationError('Este pet já está nos favoritos.')
+
+        return attrs
