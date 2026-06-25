@@ -22,3 +22,8 @@ class PodeAcessarSolicitacaoAdocao(permissions.BasePermission):
             return obj.usuario == usuario
 
         return False
+       
+
+class PodeAcessarFavorito(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.usuario == request.user
