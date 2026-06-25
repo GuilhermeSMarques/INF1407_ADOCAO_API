@@ -19,6 +19,7 @@ from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from adocoes.views import PainelResumoView
 from .views import health_check
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
     path('api/pets/', include('pets.urls')),
     path('api/solicitacoes/', include('adocoes.urls')),
     path('api/favoritos/', include('adocoes.urls_favoritos')),
+    path('api/dashboard/', PainelResumoView.as_view(), name='dashboard'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
