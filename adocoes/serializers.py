@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from pets.models import Pet
 
-from .models import SolicitacaoAdocao
+from .models import Favorito, SolicitacaoAdocao
 
 
 class SolicitacaoAdocaoSerializer(serializers.ModelSerializer):
@@ -43,7 +43,8 @@ class SolicitacaoAdocaoSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('Já existe uma solicitação pendente para este pet.')
 
         return attrs
-    
+
+
 class FavoritoSerializer(serializers.ModelSerializer):
     pet_nome = serializers.CharField(source='pet.nome', read_only=True)
 

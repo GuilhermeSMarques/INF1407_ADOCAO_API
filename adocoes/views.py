@@ -7,9 +7,9 @@ from rest_framework.response import Response
 from pets.models import Pet
 from usuarios.models import Usuario
 
-from .models import SolicitacaoAdocao
-from .permissions import PodeAcessarSolicitacaoAdocao
-from .serializers import SolicitacaoAdocaoSerializer
+from .models import Favorito, SolicitacaoAdocao
+from .permissions import PodeAcessarFavorito, PodeAcessarSolicitacaoAdocao
+from .serializers import FavoritoSerializer, SolicitacaoAdocaoSerializer
 
 
 @extend_schema(
@@ -70,21 +70,6 @@ class SolicitacaoAdocaoViewSet(viewsets.ModelViewSet):
         solicitacao.save(update_fields=['status', 'atualizado_em'])
         serializer = self.get_serializer(solicitacao)
         return Response(serializer.data)
-    
-    @extend_schema(tags=['Favoritos'])
-    class FavoritoViewSet(viewsets.ModelViewSet):
-        serializer_class = FavoritoSerializer
-        permission_classes = [IsAuthenticated, PodeAcessarFavorito]
-        http_method_names = ['get', 'post', 'delete', 'head', 'options']
-
-        def get_queryset(self):
-            if getattr(self, 'swagger_fake_view', False):
-                return Favorito.objects.none()
-
-            return Favorito.objects.select_related('usuario', 'pet').filter(usuario=self.request.user)
-
-        def perform_create(self, serializer):
-            serializer.save(usuario=self.request.user)
 
     @action(detail=True, methods=['post'])
     def recusar(self, request, pk=None):
@@ -96,3 +81,19 @@ class SolicitacaoAdocaoViewSet(viewsets.ModelViewSet):
         solicitacao.save(update_fields=['status', 'atualizado_em'])
         serializer = self.get_serializer(solicitacao)
         return Response(serializer.data)
+
+
+@extend_schema(tags=['Favoritos'])
+class FavoritoViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoritoSerializer
+    permission_classes = [IsAuthenticated, PodeAcessarFavorito]
+    http_method_names = ['get', 'post', 'delete', 'head', 'options']
+
+    def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Favorito.objects.none()
+
+        return Favorito.objects.select_related('usuario', 'pet').filter(usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
