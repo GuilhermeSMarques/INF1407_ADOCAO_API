@@ -63,3 +63,13 @@ class FavoritoSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('Este pet já está nos favoritos.')
 
         return attrs
+
+
+class PainelResumoSerializer(serializers.Serializer):
+    total_pets = serializers.IntegerField()
+    pets_disponiveis = serializers.IntegerField()
+    pets_adotados = serializers.IntegerField()
+    solicitacoes_pendentes = serializers.IntegerField()
+    solicitacoes_aprovadas = serializers.IntegerField()
+    solicitacoes_recusadas = serializers.IntegerField()
+    favoritos = serializers.IntegerField()

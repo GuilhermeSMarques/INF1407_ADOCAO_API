@@ -3,13 +3,14 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from pets.models import Pet
 from usuarios.models import Usuario
 
 from .models import Favorito, SolicitacaoAdocao
 from .permissions import PodeAcessarFavorito, PodeAcessarSolicitacaoAdocao
-from .serializers import FavoritoSerializer, SolicitacaoAdocaoSerializer
+from .serializers import FavoritoSerializer, PainelResumoSerializer, SolicitacaoAdocaoSerializer
 
 
 @extend_schema(
@@ -97,3 +98,35 @@ class FavoritoViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
+
+
+@extend_schema(tags=['Painel'], responses=PainelResumoSerializer)
+class PainelResumoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        usuario = request.user
+
+        if usuario.is_staff:
+            pets = Pet.objects.all()
+            solicitacoes = SolicitacaoAdocao.objects.all()
+            favoritos = Favorito.objects.all()
+        elif usuario.tipo_usuario == Usuario.TipoUsuario.RESPONSAVEL:
+            pets = Pet.objects.filter(responsavel=usuario)
+            solicitacoes = SolicitacaoAdocao.objects.filter(pet__responsavel=usuario)
+            favoritos = Favorito.objects.filter(pet__responsavel=usuario)
+        else:
+            pets = Pet.objects.filter(status=Pet.Status.DISPONIVEL)
+            solicitacoes = SolicitacaoAdocao.objects.filter(usuario=usuario)
+            favoritos = Favorito.objects.filter(usuario=usuario)
+
+        dados = {
+            'total_pets': pets.count(),
+            'pets_disponiveis': pets.filter(status=Pet.Status.DISPONIVEL).count(),
+            'pets_adotados': pets.filter(status=Pet.Status.ADOTADO).count(),
+            'solicitacoes_pendentes': solicitacoes.filter(status=SolicitacaoAdocao.Status.PENDENTE).count(),
+            'solicitacoes_aprovadas': solicitacoes.filter(status=SolicitacaoAdocao.Status.APROVADA).count(),
+            'solicitacoes_recusadas': solicitacoes.filter(status=SolicitacaoAdocao.Status.RECUSADA).count(),
+            'favoritos': favoritos.count(),
+        }
+        return Response(dados)
