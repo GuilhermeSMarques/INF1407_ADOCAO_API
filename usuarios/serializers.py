@@ -55,10 +55,12 @@ class RecuperarSenhaSerializer(serializers.Serializer):
     def save(self, **kwargs):
         email = self.validated_data['email']
         usuario = Usuario.objects.filter(email__iexact=email, is_active=True).first()
+        # Resposta genérica previne enumeração de e-mails cadastrados
         resposta = {
             'detail': 'Se o email estiver cadastrado, as instruções de recuperação serão enviadas.',
         }
 
+        # Em DEBUG, devolve uid/token para facilitar testes sem servidor de e-mail
         if usuario and settings.DEBUG:
             resposta['uid'] = urlsafe_base64_encode(str(usuario.pk).encode())
             resposta['token'] = default_token_generator.make_token(usuario)

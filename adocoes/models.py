@@ -5,6 +5,8 @@ from pets.models import Pet
 
 
 class SolicitacaoAdocao(models.Model):
+    """Pedido de adoção enviado por um adotante ao responsável do pet."""
+
     class Status(models.TextChoices):
         PENDENTE = 'pendente', 'Pendente'
         APROVADA = 'aprovada', 'Aprovada'
@@ -25,6 +27,7 @@ class SolicitacaoAdocao(models.Model):
     class Meta:
         ordering = ['-criado_em']
         constraints = [
+            # Garante que um adotante não abra duas solicitações pendentes para o mesmo pet
             models.UniqueConstraint(
                 fields=['usuario', 'pet'],
                 condition=models.Q(status='pendente'),
@@ -37,6 +40,8 @@ class SolicitacaoAdocao(models.Model):
 
 
 class Favorito(models.Model):
+    """Marca um pet como favorito para um usuário adotante."""
+
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

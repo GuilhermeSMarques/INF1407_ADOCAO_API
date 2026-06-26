@@ -48,6 +48,7 @@ class SolicitacaoAdocaoViewSet(viewsets.ModelViewSet):
         serializer.save(usuario=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
+        # Cancelar via DELETE: transição de estado, não exclusão física do registro
         solicitacao = self.get_object()
         if solicitacao.status != SolicitacaoAdocao.Status.PENDENTE:
             return Response(
@@ -65,6 +66,7 @@ class SolicitacaoAdocaoViewSet(viewsets.ModelViewSet):
         if solicitacao.status != SolicitacaoAdocao.Status.PENDENTE:
             return Response({'detail': 'A solicitação não está pendente.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Aprovar muda o pet para ADOTADO automaticamente, encerrando novas solicitações
         solicitacao.status = SolicitacaoAdocao.Status.APROVADA
         solicitacao.pet.status = Pet.Status.ADOTADO
         solicitacao.pet.save(update_fields=['status', 'atualizado_em'])

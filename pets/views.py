@@ -35,6 +35,8 @@ class PetViewSet(viewsets.ModelViewSet):
 
         queryset = Pet.objects.select_related('responsavel')
 
+        # Admins veem todos os pets; responsáveis veem apenas os seus;
+        # adotantes veem apenas os disponíveis para adoção.
         if usuario.is_staff:
             queryset = queryset.all()
         elif usuario.tipo_usuario == Usuario.TipoUsuario.RESPONSAVEL:
