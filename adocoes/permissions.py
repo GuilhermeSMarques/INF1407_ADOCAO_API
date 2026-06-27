@@ -27,5 +27,11 @@ class PodeAcessarSolicitacaoAdocao(permissions.BasePermission):
 
 # Favorito só pode ser removido pelo próprio usuário que o criou
 class PodeAcessarFavorito(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_staff:
+            return True
+
+        return request.user.tipo_usuario == Usuario.TipoUsuario.ADOTANTE
+
     def has_object_permission(self, request, view, obj):
-        return obj.usuario == request.user
+        return request.user.is_staff or obj.usuario == request.user
