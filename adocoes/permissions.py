@@ -3,6 +3,7 @@ from rest_framework import permissions
 from usuarios.models import Usuario
 
 
+# Somente adotantes criam solicitações; responsáveis só aprovam/recusam as dos seus pets
 class PodeAcessarSolicitacaoAdocao(permissions.BasePermission):
     def has_permission(self, request, view):
         if view.action == 'create':
@@ -24,6 +25,7 @@ class PodeAcessarSolicitacaoAdocao(permissions.BasePermission):
         return False
        
 
+# Favorito só pode ser removido pelo próprio usuário que o criou
 class PodeAcessarFavorito(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.usuario == request.user

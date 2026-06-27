@@ -4,6 +4,7 @@ from django.db import models
 from pets.models import Pet
 
 
+# Pedido de adoção criado por um adotante para um pet específico
 class SolicitacaoAdocao(models.Model):
     class Status(models.TextChoices):
         PENDENTE = 'pendente', 'Pendente'
@@ -36,6 +37,7 @@ class SolicitacaoAdocao(models.Model):
         return f'{self.usuario} - {self.pet}'
 
 
+# Pet marcado como favorito por um adotante para consulta futura
 class Favorito(models.Model):
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 
 
+# Representa um pet cadastrado por um responsável para adoção
 class Pet(models.Model):
     class Especie(models.TextChoices):
         CACHORRO = 'cachorro', 'Cachorro'

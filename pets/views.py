@@ -20,6 +20,7 @@ from .serializers import PetSerializer
         OpenApiParameter('search', str, description='Busca por nome ou raca.'),
     ],
 )
+# Responsáveis veem apenas seus próprios pets; adotantes veem apenas os disponíveis
 class PetViewSet(viewsets.ModelViewSet):
     serializer_class = PetSerializer
     permission_classes = [IsAuthenticated, PodeGerenciarPet]

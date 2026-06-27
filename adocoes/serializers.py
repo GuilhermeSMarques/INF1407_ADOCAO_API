@@ -5,6 +5,7 @@ from pets.models import Pet
 from .models import Favorito, SolicitacaoAdocao
 
 
+# Valida que o pet está disponível e que o usuário ainda não tem uma solicitação pendente para ele
 class SolicitacaoAdocaoSerializer(serializers.ModelSerializer):
     usuario_nome = serializers.CharField(source='usuario.nome', read_only=True)
     pet_nome = serializers.CharField(source='pet.nome', read_only=True)
@@ -45,6 +46,7 @@ class SolicitacaoAdocaoSerializer(serializers.ModelSerializer):
         return attrs
 
 
+# Impede que o mesmo pet seja favoritado duas vezes pelo mesmo usuário
 class FavoritoSerializer(serializers.ModelSerializer):
     pet_nome = serializers.CharField(source='pet.nome', read_only=True)
 

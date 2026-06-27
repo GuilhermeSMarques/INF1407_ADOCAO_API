@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 
+# Manager customizado para criar usuários usando email como chave primária
 class UsuarioManager(BaseUserManager):
     use_in_migrations = True
 
@@ -33,6 +34,7 @@ class UsuarioManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+# Usuário customizado: substitui username por email e adiciona tipo (adotante/responsável)
 class Usuario(AbstractUser):
     class TipoUsuario(models.TextChoices):
         ADOTANTE = 'adotante', 'Adotante'

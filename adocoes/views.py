@@ -19,6 +19,7 @@ from .serializers import FavoritoSerializer, PainelResumoSerializer, Solicitacao
         OpenApiParameter('status', str, description='Filtra por status da solicitação.'),
     ],
 )
+# CRUD de solicitações: adotantes criam, responsáveis aprovam/recusam, cada um vê apenas as suas
 class SolicitacaoAdocaoViewSet(viewsets.ModelViewSet):
     serializer_class = SolicitacaoAdocaoSerializer
     permission_classes = [IsAuthenticated, PodeAcessarSolicitacaoAdocao]
@@ -85,6 +86,7 @@ class SolicitacaoAdocaoViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=['Favoritos'])
+# Favoritos pertencem ao usuário autenticado — filtra automaticamente no queryset
 class FavoritoViewSet(viewsets.ModelViewSet):
     serializer_class = FavoritoSerializer
     permission_classes = [IsAuthenticated, PodeAcessarFavorito]
@@ -101,6 +103,7 @@ class FavoritoViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema(tags=['Painel'], responses=PainelResumoSerializer)
+# Retorna métricas diferentes dependendo do perfil: staff vê tudo, responsável vê seus pets, adotante vê o geral
 class PainelResumoView(APIView):
     permission_classes = [IsAuthenticated]
 

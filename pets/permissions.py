@@ -3,6 +3,7 @@ from rest_framework import permissions
 from usuarios.models import Usuario
 
 
+# Leitura é livre para autenticados; escrita e exclusão são restritas ao responsável do pet
 class PodeGerenciarPet(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
