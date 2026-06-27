@@ -12,7 +12,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ['id', 'nome', 'email', 'telefone', 'tipo_usuario', 'criado_em', 'is_active']
-        read_only_fields = ['id', 'criado_em', 'is_active']
+        read_only_fields = ['id', 'tipo_usuario', 'criado_em', 'is_active']
 
 
 class RegistroUsuarioSerializer(serializers.ModelSerializer):

@@ -27,6 +27,12 @@ class UsuarioAtualView(APIView):
         serializer = UsuarioSerializer(request.user)
         return Response(serializer.data)
 
+    def patch(self, request):
+        serializer = UsuarioSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 @extend_schema(tags=['Autenticação'], request=AlterarSenhaSerializer)
 class AlterarSenhaView(generics.GenericAPIView):
